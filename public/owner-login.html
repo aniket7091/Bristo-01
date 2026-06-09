@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Login — Bristo Café Admin</title>
+  <meta name="description" content="Secure owner login for Bristo Café administration." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar">
+        <a class="brand" href="/">
+          <div class="brand-mark">☕</div>
+          <span>Bristo</span>
+        </a>
+        <div class="nav-actions">
+          <a href="/" class="btn btn-ghost" id="nav-back-home">← Back to Site</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth-shell" id="login-shell">
+    <div class="auth-card" id="login-card">
+      <div class="eyebrow" style="margin-bottom:1.25rem">🔐 Owner Portal</div>
+      <h1 style="font-size:2rem;margin-bottom:0.5rem">Sign In</h1>
+      <p class="muted" style="margin:0 0 1.5rem">Access your café admin dashboard.</p>
+
+      <form data-auth-form data-mode="login" id="login-form" class="form-grid" novalidate>
+        <label for="login-email">
+          Email Address
+          <input type="email" id="login-email" name="email" placeholder="owner@bristo.cafe" required autocomplete="email" />
+        </label>
+        <label for="login-password">
+          Password
+          <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" style="width:100%" id="login-submit">Sign In</button>
+        </div>
+        <div data-feedback class="feedback hidden" id="login-feedback" role="status"></div>
+      </form>
+
+      <p class="small" style="margin-top:1.5rem;text-align:center;color:var(--muted)">
+        Don't have an account? <a href="/owner-signup" style="color:var(--accent-deep);font-weight:700" id="signup-link">Create one</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (window.BristoAPI?.getOwnerToken()) {
+      window.location.href = '/admin';
+    }
+  </script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

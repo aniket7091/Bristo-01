@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog & Articles — Bristo Café</title>
+  <meta name="description" content="Explore the Bristo Café blog — coffee guides, brewing tips, café culture stories, and behind-the-scenes articles from our team." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="has-global-nav">
+
+  <div class="global-nav-wrap">
+    <nav class="global-nav" aria-label="Primary">
+      <a class="global-nav-logo" href="/" aria-label="Bristo home">☕</a>
+      <div class="global-nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/about">About</a>
+        <a href="/blog" class="active">Blog &amp; Articles</a>
+        <a href="/contact">Location</a>
+      </div>
+      <a href="/menu" class="global-nav-order">Order Online</a>
+    </nav>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="page-hero" id="blog-hero">
+        <div class="page-hero-shell">
+          <div class="eyebrow">📖 Stories &amp; Guides</div>
+          <h1>Blog &amp; Articles</h1>
+          <p>Brewing knowledge one word at a time — from bean-to-cup guides, seasonal picks, café culture deep-dives, and the stories that keep our community warm.</p>
+        </div>
+      </section>
+
+      <!-- Category Filter -->
+      <section class="section blog-filter-section" id="blog-categories">
+        <div class="blog-filter-bar">
+          <button class="blog-filter-btn active" data-filter="all" id="filter-all">All Posts</button>
+          <button class="blog-filter-btn" data-filter="brewing"      id="filter-brewing">☕ Brewing Guides</button>
+          <button class="blog-filter-btn" data-filter="culture"      id="filter-culture">🌍 Café Culture</button>
+          <button class="blog-filter-btn" data-filter="recipes"      id="filter-recipes">🍰 Recipes</button>
+          <button class="blog-filter-btn" data-filter="sustainability" id="filter-sustainability">🌱 Sustainability</button>
+          <button class="blog-filter-btn" data-filter="news"         id="filter-news">📣 News</button>
+        </div>
+      </section>
+
+      <!-- Featured Post -->
+      <section class="section" id="blog-featured-section">
+        <div id="blog-featured-container">
+          <!-- Injected by JS -->
+        </div>
+      </section>
+
+      <!-- Post Grid -->
+      <section class="section" id="blog-grid-section">
+        <div class="section-heading">
+          <h2>Latest Articles</h2>
+          <p>Fresh from our team — stories, guides, and ideas to enrich your coffee life.</p>
+        </div>
+
+        <!-- Loading state -->
+        <div id="blog-loading" style="text-align:center;padding:3rem 0;">
+          <div class="spinner"></div>
+          <p style="color:var(--muted);margin-top:0.5rem">Loading articles…</p>
+        </div>
+
+        <!-- Empty state -->
+        <div id="blog-empty" class="empty-state hidden" style="padding:3rem;text-align:center;">
+          <div style="font-size:2.5rem;margin-bottom:1rem">📭</div>
+          <p>No posts yet. Check back soon!</p>
+        </div>
+
+        <!-- Posts grid -->
+        <div class="blog-grid" id="blog-posts-grid"></div>
+      </section>
+
+      <!-- Newsletter Strip -->
+      <section class="section" id="blog-newsletter">
+        <div class="blog-newsletter-card">
+          <div class="blog-newsletter-glow" aria-hidden="true"></div>
+          <div class="blog-newsletter-body">
+            <div class="eyebrow">✉️ Stay in the loop</div>
+            <h2 style="font-family:'Fraunces',serif; margin: 0.75rem 0 0.5rem;">Get fresh articles in your inbox</h2>
+            <p style="color:var(--muted); max-width:42ch;">Join over 2,400 coffee lovers who receive our weekly newsletter — no spam, just good reads and even better recipes.</p>
+            <form class="blog-newsletter-form" id="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+              <input type="email" id="newsletter-email" placeholder="your@email.com" required aria-label="Email address" />
+              <button type="submit" class="btn btn-primary" id="newsletter-submit">Subscribe →</button>
+            </form>
+            <div class="feedback hidden" id="newsletter-feedback" role="alert"></div>
+          </div>
+          <div class="blog-newsletter-deco" aria-hidden="true">
+            <span>📖</span>
+            <span>☕</span>
+            <span>✨</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-shell">
+        <div>
+          <div class="brand"><div class="brand-mark" style="width:36px;height:36px;font-size:1rem">☕</div> Bristo</div>
+          <p class="small" style="margin-top:0.5rem">Brewing happiness, one cup at a time.</p>
+        </div>
+        <div class="small" style="text-align:right">
+          <div><a href="/menu">Menu</a> · <a href="/about">About</a> · <a href="/blog">Blog</a> · <a href="/contact">Contact</a></div>
+          <div style="margin-top:0.4rem">© 2024 Bristo Café. All rights reserved.</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    /* ── Helpers ───────────────────────────────────────── */
+    const escHtml = (s = '') => String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+    const CATEGORY_ICONS = {
+      brewing:        '☕',
+      culture:        '🌍',
+      recipes:        '🍰',
+      sustainability: '🌱',
+      news:           '📣'
+    };
+
+    const CATEGORY_LABELS = {
+      brewing:        'Brewing Guides',
+      culture:        'Café Culture',
+      recipes:        'Recipes',
+      sustainability: 'Sustainability',
+      news:           'News'
+    };
+
+    const FALLBACK_IMAGES = [
+      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80'
+    ];
+
+    const formatDate = (iso) => {
+      try {
+        return new Date(iso).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      } catch { return ''; }
+    };
+
+    /* ── State ─────────────────────────────────────────── */
+    let allPosts = [];
+    let activeFilter = 'all';
+
+    /* ── Render featured post ──────────────────────────── */
+    function renderFeatured(post) {
+      const container = document.getElementById('blog-featured-container');
+      if (!post) { container.innerHTML = ''; return; }
+      const icon  = CATEGORY_ICONS[post.category] || '📝';
+      const label = CATEGORY_LABELS[post.category] || post.category;
+      container.innerHTML = `
+        <div class="blog-featured-card" id="post-featured">
+          <div class="blog-featured-img">
+            <img src="${escHtml(post.imageUrl || FALLBACK_IMAGES[0])}" alt="${escHtml(post.title)}" loading="lazy" />
+            <div class="blog-featured-badge">✦ Featured</div>
+          </div>
+          <div class="blog-featured-body">
+            <div class="blog-meta-row">
+              <span class="blog-category-tag">${icon} ${escHtml(label)}</span>
+              <span class="blog-read-time">${escHtml(post.readTime || '5 min read')}</span>
+            </div>
+            <h2>${escHtml(post.title)}</h2>
+            <p>${escHtml(post.excerpt)}</p>
+            <div class="blog-author-row">
+              <div class="blog-author-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent-soft))">☕</div>
+              <div>
+                <div class="blog-author-name">${escHtml(post.author || 'Bristo Team')}</div>
+                <div class="blog-post-date">${formatDate(post.createdAt)}</div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    /* ── Render grid cards ─────────────────────────────── */
+    function renderGrid(posts) {
+      const grid = document.getElementById('blog-posts-grid');
+      const empty = document.getElementById('blog-empty');
+
+      if (!posts.length) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      grid.innerHTML = posts.map((post, i) => {
+        const icon  = CATEGORY_ICONS[post.category] || '📝';
+        const label = CATEGORY_LABELS[post.category] || post.category;
+        const img   = post.imageUrl || FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+        return `
+          <article class="blog-card" data-category="${escHtml(post.category)}" data-id="${escHtml(post._id)}">
+            <a href="#" class="blog-card-img-wrap" aria-label="Read: ${escHtml(post.title)}">
+              <img src="${escHtml(img)}" alt="${escHtml(post.title)}" loading="lazy" />
+              <div class="blog-card-overlay-badge">${icon} ${escHtml(label)}</div>
+            </a>
+            <div class="blog-card-body">
+              <div class="blog-meta-row">
+                <span class="blog-read-time">${escHtml(post.readTime || '3 min read')}</span>
+                <span class="blog-post-date">${formatDate(post.createdAt)}</span>
+              </div>
+              <h3>${escHtml(post.title)}</h3>
+              <p>${escHtml(post.excerpt)}</p>
+              <div class="blog-card-footer">
+                <div class="blog-author-row blog-author-small">
+                  <div class="blog-author-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent-soft));width:32px;height:32px;font-size:.9rem">☕</div>
+                  <span>${escHtml(post.author || 'Bristo Team')}</span>
+                </div>
+                <a href="#" class="btn btn-secondary blog-read-btn">Read →</a>
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+    }
+
+    /* ── Apply active filter ───────────────────────────── */
+    function applyFilter(filter) {
+      activeFilter = filter;
+      const filtered = filter === 'all'
+        ? allPosts
+        : allPosts.filter(p => p.category === filter);
+
+      // Featured = first featured post (or first post overall)
+      const featured = filtered.find(p => p.isFeatured) || filtered[0] || null;
+      renderFeatured(featured);
+
+      // Grid = everything except the featured one
+      const gridPosts = featured ? filtered.filter(p => p._id !== featured._id) : filtered;
+      renderGrid(gridPosts);
+    }
+
+    /* ── Fetch from API ────────────────────────────────── */
+    async function loadBlogPosts() {
+      const loading = document.getElementById('blog-loading');
+      try {
+        const data = await BristoAPI.request(BristoAPI.API.blog);
+        allPosts = (data.posts || []).filter(p => p.isPublished !== false);
+        loading.classList.add('hidden');
+        applyFilter('all');
+      } catch (err) {
+        console.warn('Blog fetch error:', err.message);
+        loading.innerHTML = `<p style="color:var(--muted)">Could not load articles. Please try again later.</p>`;
+      }
+    }
+
+    /* ── Filter button clicks ──────────────────────────── */
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.filter);
+      });
+    });
+
+    /* ── Newsletter ────────────────────────────────────── */
+    function handleNewsletterSubmit(e) {
+      e.preventDefault();
+      const fb  = document.getElementById('newsletter-feedback');
+      const btn = document.getElementById('newsletter-submit');
+      btn.textContent = 'Subscribing…';
+      btn.disabled = true;
+      setTimeout(() => {
+        fb.textContent = '🎉 You\'re in! Watch your inbox for our next edition.';
+        fb.className = 'feedback success';
+        btn.textContent = 'Subscribe →';
+        btn.disabled = false;
+        document.getElementById('newsletter-email').value = '';
+      }, 900);
+    }
+
+    /* ── Init ──────────────────────────────────────────── */
+    loadBlogPosts();
+  </script>
+</body>
+</html>

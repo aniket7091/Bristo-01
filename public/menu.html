@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu & Order — Bristo Café</title>
+  <meta name="description" content="Browse Bristo Café's full menu of coffees, breakfast plates, mains, and desserts. Add items to your order and place it directly from your table." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css?v=2" />
+</head>
+<body class="has-global-nav">
+
+  <div class="global-nav-wrap">
+    <nav class="global-nav" aria-label="Primary">
+      <a class="global-nav-logo" href="/" aria-label="Bristo home">☕</a>
+      <div class="global-nav-links">
+        <a href="/">Home</a>
+        <a href="/menu" class="active">Menu</a>
+        <a href="/about">About</a>
+        <a href="/blog">Blog &amp; Articles</a>
+        <a href="/contact">Location</a>
+      </div>
+      <a href="/menu" class="global-nav-order">Order Online</a>
+    </nav>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+
+      <section class="page-hero" id="menu-hero">
+        <div class="page-hero-shell">
+          <div class="eyebrow">🍽️ Full Menu</div>
+          <h1>What's Cooking at Bristo</h1>
+          <p>Freshly prepared items, sourced locally. Enter your details, pick your favourites, and we'll have it at your table.</p>
+        </div>
+      </section>
+
+      <!-- ORDER TRACKING PANEL (hidden until order placed) -->
+      <section class="order-tracking-section hidden" id="order-tracking-section">
+        <div class="order-tracking-card" id="order-tracking-card">
+          <div class="tracking-header">
+            <div class="tracking-icon">🍳</div>
+            <h3>Order Tracker</h3>
+            <button type="button" class="btn btn-ghost btn-sm" id="dismiss-tracking-btn" title="Dismiss">✕</button>
+          </div>
+
+          <!-- Status Progress Bar -->
+          <div class="tracking-progress" id="tracking-progress">
+            <div class="progress-step active" data-step="pending">
+              <div class="step-dot"></div>
+              <span>Placed</span>
+            </div>
+            <div class="progress-line" id="progress-line-1"></div>
+            <div class="progress-step" data-step="preparing">
+              <div class="step-dot"></div>
+              <span>Preparing</span>
+            </div>
+            <div class="progress-line" id="progress-line-2"></div>
+            <div class="progress-step" data-step="ready">
+              <div class="step-dot"></div>
+              <span>Ready!</span>
+            </div>
+          </div>
+
+          <!-- Countdown Timer -->
+          <div class="tracking-timer" id="tracking-timer">
+            <div class="timer-ring" id="timer-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="timer-progress" cx="50" cy="50" r="45" id="timer-circle"></circle>
+              </svg>
+              <div class="timer-text" id="timer-text">--:--</div>
+            </div>
+            <div class="timer-label" id="timer-label">Your order will be ready in</div>
+          </div>
+
+          <!-- Tracked order details -->
+          <div class="tracking-details" id="tracking-details">
+            <div class="tracking-info-row">
+              <span class="muted">Order for</span>
+              <strong id="track-customer-name">—</strong>
+            </div>
+            <div class="tracking-info-row">
+              <span class="muted">Table</span>
+              <strong id="track-table-number">—</strong>
+            </div>
+            <div class="tracking-items" id="tracking-items-list"></div>
+            <div class="tracking-totals">
+              <div class="tracking-info-row">
+                <span>Subtotal</span>
+                <span id="track-subtotal">₹0</span>
+              </div>
+              <div class="tracking-info-row gst-row">
+                <span>GST (18%)</span>
+                <span id="track-gst">₹0</span>
+              </div>
+              <div class="tracking-info-row total-row">
+                <strong>Total</strong>
+                <strong id="track-total">₹0</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="menu-section">
+        <div class="menu-layout">
+
+          <!-- LEFT: Menu Grid -->
+          <div id="menu-left-col">
+            <div class="menu-toolbar" id="menu-toolbar">
+              <label for="menu-search-input" style="display:none">Search</label>
+              <input
+                type="search"
+                id="menu-search-input"
+                data-menu-search
+                placeholder="Search dishes or drinks…"
+                aria-label="Search menu"
+              />
+              <select id="menu-category-filter" data-category-filter aria-label="Filter by category">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+
+            <div class="menu-grid" data-menu-grid id="menu-grid">
+              <div class="empty-state" style="grid-column:1/-1" id="menu-loading-state">
+                <div class="spinner" style="width:40px;height:40px;border:3px solid rgba(199,99,44,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem"></div>
+                Loading today's menu…
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Order Panel -->
+          <div class="order-panel sticky" id="order-panel">
+            <h3 style="margin-top:0">Your Order</h3>
+
+            <form data-order-form id="order-form" class="form-grid" style="margin-bottom:1rem" novalidate>
+              <div class="grid-2">
+                <label for="customer-name">
+                  Your Name
+                  <input type="text" id="customer-name" name="customerName" placeholder="Aarav" required />
+                </label>
+                <label for="table-number">
+                  Table No.
+                  <input type="number" id="table-number" name="tableNumber" placeholder="e.g. 5" min="1" required />
+                </label>
+              </div>
+            </form>
+
+            <div class="cart-list" data-cart-list id="cart-list">
+              <div class="empty-state" id="cart-empty-state">Your order summary will appear here once you add items.</div>
+            </div>
+
+            <!-- GST Breakdown -->
+            <div class="cart-totals" id="cart-totals" style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--line)">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span data-subtotal-amount id="cart-subtotal">₹0</span>
+              </div>
+              <div class="summary-row gst-line">
+                <span>GST (18%)</span>
+                <span data-gst-amount id="cart-gst">₹0</span>
+              </div>
+              <div class="summary-row total-line">
+                <span style="font-weight:700">Total</span>
+                <span class="price" data-total-amount id="cart-total" style="font-weight:700">₹0</span>
+              </div>
+            </div>
+
+            <div class="order-actions" style="margin-top:1rem">
+              <button type="button" class="btn btn-ghost" data-clear-cart id="clear-cart-btn">Clear</button>
+              <button type="submit" form="order-form" class="btn btn-primary" data-place-order id="place-order-btn" style="flex:1">Place Order</button>
+            </div>
+
+            <div data-order-feedback class="feedback hidden" id="order-feedback" role="status"></div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-shell">
+        <div>
+          <div class="brand"><div class="brand-mark" style="width:36px;height:36px;font-size:1rem">☕</div> Bristo</div>
+          <p class="small" style="margin-top:0.5rem">Brewing happiness, one cup at a time.</p>
+        </div>
+        <div class="small" style="text-align:right">
+          <div><a href="/menu">Menu</a> · <a href="/about">About</a> · <a href="/blog">Blog</a> · <a href="/contact">Contact</a></div>
+          <div style="margin-top:0.4rem">© 2024 Bristo Café. All rights reserved.</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/menu.js?v=2"></script>
+</body>
+</html>

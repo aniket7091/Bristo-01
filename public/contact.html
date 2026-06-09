@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Bristo Café</title>
+  <meta name="description" content="Get in touch with Bristo Café. We'd love to hear from you — questions, feedback, or just a hello." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="has-global-nav">
+
+  <div class="global-nav-wrap">
+    <nav class="global-nav" aria-label="Primary">
+      <a class="global-nav-logo" href="/" aria-label="Bristo home">☕</a>
+      <div class="global-nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/about">About</a>
+        <a href="/blog">Blog &amp; Articles</a>
+        <a href="/contact" class="active">Location</a>
+      </div>
+      <a href="/menu" class="global-nav-order">Order Online</a>
+    </nav>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+
+      <section class="page-hero" id="contact-hero">
+        <div class="page-hero-shell">
+          <div class="eyebrow">✉️ Get in Touch</div>
+          <h1>We'd Love to Hear From You</h1>
+          <p>Questions, feedback, partnership enquiries — our inbox is always open. We'll get back to you within 24 hours.</p>
+        </div>
+      </section>
+
+      <section class="section" id="contact-main">
+        <div class="contact-grid">
+
+          <div class="contact-card" id="contact-form-card">
+            <h3>Send Us a Message</h3>
+            <form data-contact-form id="contact-form" class="form-grid" novalidate>
+              <label for="contact-name">
+                Your Name
+                <input type="text" id="contact-name" name="name" placeholder="Aarav Kumar" required />
+              </label>
+              <label for="contact-email">
+                Email Address
+                <input type="email" id="contact-email" name="email" placeholder="hello@example.com" required />
+              </label>
+              <label for="contact-message">
+                Message
+                <textarea id="contact-message" name="message" placeholder="Tell us what's on your mind..." required></textarea>
+              </label>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="contact-submit">Send Message</button>
+              </div>
+              <div data-contact-feedback class="feedback hidden" id="contact-feedback" role="status"></div>
+            </form>
+          </div>
+
+          <div style="display:grid;gap:1rem;align-content:start" id="contact-info-panel">
+            <div class="info-card" id="info-visit">
+              <div class="eyebrow">📍 Visit Us</div>
+              <h3>Our Location</h3>
+              <p class="muted">12, MG Road, Koramangala<br/>Bengaluru, Karnataka 560034</p>
+            </div>
+            <div class="info-card" id="info-hours">
+              <div class="eyebrow">🕐 Hours</div>
+              <h3>Opening Times</h3>
+              <div class="small" style="display:grid;gap:0.4rem;color:var(--muted)">
+                <div style="display:flex;justify-content:space-between"><span>Monday – Friday</span><span>7:30am – 9:00pm</span></div>
+                <div style="display:flex;justify-content:space-between"><span>Saturday</span><span>8:00am – 10:00pm</span></div>
+                <div style="display:flex;justify-content:space-between"><span>Sunday</span><span>9:00am – 8:00pm</span></div>
+              </div>
+            </div>
+            <div class="info-card" id="info-contact-details">
+              <div class="eyebrow">📞 Reach Out</div>
+              <h3>Direct Contact</h3>
+              <p class="muted" style="margin:0">📧 hello@bristo.cafe<br/>📱 +91 98765 43210</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-shell">
+        <div>
+          <div class="brand"><div class="brand-mark" style="width:36px;height:36px;font-size:1rem">☕</div> Bristo</div>
+          <p class="small" style="margin-top:0.5rem">Brewing happiness, one cup at a time.</p>
+        </div>
+        <div class="small" style="text-align:right">
+          <div><a href="/menu">Menu</a> · <a href="/about">About</a> · <a href="/blog">Blog</a> · <a href="/contact">Contact</a></div>
+          <div style="margin-top:0.4rem">© 2024 Bristo Café. All rights reserved.</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/contact.js"></script>
+</body>
+</html>

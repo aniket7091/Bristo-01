@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Bristo Café</title>
+  <meta name="description" content="Bristo Café owner dashboard — manage menu items, track orders, and view key metrics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css?v=2" />
+  <style>
+    .admin-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .tab-btn {
+      padding:0.65rem 1.25rem; border-radius:999px; border:none; cursor:pointer;
+      font:inherit; font-weight:700; font-size:0.92rem;
+      background:rgba(199,99,44,0.08); color:var(--muted);
+      transition:0.2s ease;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background:linear-gradient(135deg,var(--accent),#da8548);
+      color:#fff; box-shadow:0 8px 20px rgba(199,99,44,0.22);
+    }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .orders-cols { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+    @media(max-width:900px){ .orders-cols { grid-template-columns:1fr; } }
+    .orders-section-title {
+      font-family:'Fraunces',serif; font-size:1.2rem; margin:0 0 0.75rem;
+      display:flex; align-items:center; gap:0.5rem;
+    }
+    .pulse {
+      width:10px; height:10px; border-radius:50%;
+      background:var(--accent); display:inline-block;
+      animation:pulse 1.4s ease infinite;
+    }
+    @keyframes pulse {
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%{ opacity:0.5; transform:scale(0.8); }
+    }
+    .img-wrap { position:relative; }
+    .img-wrap .remove-img {
+      position:absolute; top:8px; right:8px;
+      background:rgba(161,45,35,0.85); color:#fff; border:none;
+      border-radius:50%; width:28px; height:28px; padding:0;
+      cursor:pointer; font-size:1rem; display:none; place-items:center;
+    }
+    .img-wrap:hover .remove-img { display:grid; }
+    .metric { background:var(--surface); border:1px solid rgba(255,255,255,0.6); box-shadow:var(--shadow); backdrop-filter:blur(12px); }
+    .refresh-btn { font-size:0.85rem; padding:0.55rem 1rem; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar">
+        <a class="brand" href="/">
+          <div class="brand-mark">☕</div>
+          <span>Bristo Admin</span>
+        </a>
+        <div class="nav-links">
+          <span style="color:var(--muted);font-size:0.9rem">Welcome, <strong data-owner-name id="admin-owner-name">…</strong></span>
+        </div>
+        <div class="nav-actions">
+          <a href="/" class="btn btn-ghost" id="admin-view-site">View Site</a>
+          <button type="button" class="btn btn-danger" data-logout id="admin-logout-btn">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+
+      <!-- PAGE TITLE -->
+      <div class="admin-top" id="admin-page-top">
+        <div>
+          <h1 style="font-size:clamp(1.8rem,4vw,2.6rem)">Dashboard</h1>
+          <p class="muted" style="margin:0">Manage your menu, monitor orders, and grow your café.</p>
+        </div>
+        <button type="button" class="btn btn-ghost refresh-btn" id="admin-refresh-btn" title="Refresh all data">↻ Refresh</button>
+      </div>
+
+      <!-- METRICS ROW -->
+      <div class="metrics-grid" id="metrics-row">
+        <div class="metric" id="metric-menu-card">
+          <div class="small" style="color:var(--muted)">Menu Items</div>
+          <strong data-metric-menu id="metric-menu">—</strong>
+        </div>
+        <div class="metric" id="metric-current-card">
+          <div class="small" style="color:var(--muted)">Active Orders</div>
+          <strong data-metric-current id="metric-current">—</strong>
+        </div>
+        <div class="metric" id="metric-completed-card">
+          <div class="small" style="color:var(--muted)">Completed Today</div>
+          <strong data-metric-completed id="metric-completed">—</strong>
+        </div>
+        <div class="metric" id="metric-revenue-card">
+          <div class="small" style="color:var(--muted)">Revenue (Completed)</div>
+          <strong data-metric-revenue id="metric-revenue">—</strong>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="admin-tabs" role="tablist" id="admin-tabs">
+        <button type="button" class="tab-btn active" role="tab" aria-selected="true"  data-tab="menu"   id="tab-menu-btn">🍽️ Menu Management</button>
+        <button type="button" class="tab-btn"        role="tab" aria-selected="false" data-tab="orders" id="tab-orders-btn">📋 Orders</button>
+        <button type="button" class="tab-btn"        role="tab" aria-selected="false" data-tab="blog"   id="tab-blog-btn">📝 Blog Posts</button>
+      </div>
+
+      <!-- TAB: MENU MANAGEMENT -->
+      <div class="tab-panel active" data-panel="menu" id="panel-menu">
+        <div class="admin-grid">
+
+          <!-- FORM: Add / Edit -->
+          <div class="admin-shell" id="menu-form-shell">
+            <h2 data-menu-form-title id="menu-form-title" style="margin-top:0;font-size:1.35rem;font-family:'Fraunces',serif">Add Menu Item</h2>
+
+            <form data-menu-form id="menu-item-form" class="form-grid" novalidate>
+
+              <!-- Image preview -->
+              <div class="preview-box img-wrap" id="preview-box">
+                <img data-preview-image id="admin-preview-image" class="hidden" alt="Item preview" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px" />
+                <span data-preview-placeholder id="preview-placeholder" style="color:var(--muted)">📷 Image preview</span>
+              </div>
+
+              <label for="admin-image-upload">
+                Upload Image (via ImageKit)
+                <input type="file" id="admin-image-upload" data-image-input accept="image/*" />
+              </label>
+              <div data-image-status id="admin-image-status" class="help-text">Upload an item photo to ImageKit before saving.</div>
+
+              <div class="grid-2">
+                <label for="admin-item-name">
+                  Item Name
+                  <input type="text" id="admin-item-name" name="name" placeholder="Signature Cappuccino" required />
+                </label>
+                <label for="admin-item-price">
+                  Price (₹)
+                  <input type="number" id="admin-item-price" name="price" placeholder="180" min="0" step="0.01" required />
+                </label>
+              </div>
+
+              <label for="admin-item-category">
+                Category
+                <input type="text" id="admin-item-category" name="category" placeholder="Coffee, Breakfast, Dessert…" required list="category-suggestions" />
+                <datalist id="category-suggestions">
+                  <option value="Coffee" />
+                  <option value="Breakfast" />
+                  <option value="Main Course" />
+                  <option value="Dessert" />
+                  <option value="Beverage" />
+                  <option value="Snacks" />
+                </datalist>
+              </label>
+
+              <label for="admin-item-desc">
+                Description <span class="help-text">(optional)</span>
+                <textarea id="admin-item-desc" name="description" placeholder="Short, enticing description…" style="min-height:80px"></textarea>
+              </label>
+
+              <label style="flex-direction:row;align-items:center;gap:0.75rem;font-weight:600;cursor:pointer">
+                <input type="checkbox" id="admin-item-available" name="isAvailable" checked style="width:auto" />
+                Mark as available on menu
+              </label>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="admin-save-item-btn">Save Menu Item</button>
+                <button type="button" class="btn btn-ghost hidden" data-cancel-edit id="admin-cancel-edit-btn">Cancel Edit</button>
+              </div>
+
+              <div data-menu-feedback class="feedback hidden" id="admin-menu-feedback" role="status"></div>
+            </form>
+          </div>
+
+          <!-- LIST: Current menu items -->
+          <div class="admin-shell" id="menu-list-shell">
+            <h2 style="margin-top:0;font-size:1.35rem;font-family:'Fraunces',serif">Current Menu</h2>
+            <div class="admin-list" data-admin-menu-list id="admin-menu-list">
+              <div class="empty-state" id="menu-list-loading">Loading menu items…</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB: ORDERS -->
+      <div class="tab-panel" data-panel="orders" id="panel-orders">
+        <div class="admin-shell" style="margin-bottom:1.5rem" id="orders-filter-bar">
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <label for="order-table-filter" style="margin:0;font-weight:700">Filter by Table:</label>
+            <input
+              type="number"
+              id="order-table-filter"
+              data-order-table-filter
+              placeholder="e.g. 3"
+              min="1"
+              class="table-filter"
+            />
+            <button type="button" class="btn btn-ghost" id="clear-table-filter" style="padding:0.55rem 1rem;font-size:0.9rem">Clear Filter</button>
+          </div>
+        </div>
+
+        <div class="orders-cols" id="orders-columns">
+          <div id="current-orders-col">
+            <div class="orders-section-title"><span class="pulse"></span> Active Orders</div>
+            <div class="order-list" data-current-orders id="current-orders-list">
+              <div class="empty-state">Loading…</div>
+            </div>
+          </div>
+          <div id="completed-orders-col">
+            <div class="orders-section-title">✅ Completed Orders</div>
+            <div class="order-list" data-completed-orders id="completed-orders-list">
+              <div class="empty-state">Loading…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: BLOG POSTS -->
+      <div class="tab-panel" data-panel="blog" id="panel-blog">
+        <div class="admin-grid">
+
+          <!-- FORM: new blog post -->
+          <div class="admin-shell" id="blog-form-shell">
+            <h2 id="blog-form-title" style="margin-top:0;font-size:1.35rem;font-family:'Fraunces',serif">New Blog Post</h2>
+            <form id="blog-post-form" class="form-grid" novalidate>
+              <input type="hidden" id="blog-edit-id" />
+
+              <label for="blog-cover-url">
+                Cover Image URL
+                <input type="url" id="blog-cover-url" placeholder="https://images.unsplash.com/…" required />
+              </label>
+              <div id="blog-img-preview" style="display:none">
+                <img id="blog-preview-img" src="" alt="" style="width:100%;max-height:200px;object-fit:cover;border-radius:16px;border:1px solid var(--line)" />
+              </div>
+
+              <label for="blog-title">
+                Title
+                <input type="text" id="blog-title" placeholder="The Art of Espresso…" required />
+              </label>
+
+              <label for="blog-excerpt">
+                Excerpt <span class="help-text">(short summary shown on the blog page)</span>
+                <textarea id="blog-excerpt" style="min-height:90px" placeholder="A short, enticing intro to the post…" required></textarea>
+              </label>
+
+              <div class="grid-2">
+                <label for="blog-category">
+                  Category
+                  <select id="blog-category" required>
+                    <option value="brewing">☕ Brewing Guides</option>
+                    <option value="culture">🌍 Café Culture</option>
+                    <option value="recipes">🍰 Recipes</option>
+                    <option value="sustainability">🌱 Sustainability</option>
+                    <option value="news" selected>📣 News</option>
+                  </select>
+                </label>
+                <label for="blog-author">
+                  Author
+                  <input type="text" id="blog-author" placeholder="Priya Menon" />
+                </label>
+              </div>
+
+              <label for="blog-readtime">
+                Read Time <span class="help-text">(e.g. 5 min read)</span>
+                <input type="text" id="blog-readtime" placeholder="5 min read" />
+              </label>
+
+              <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+                <label style="flex-direction:row;align-items:center;gap:0.75rem;font-weight:600;cursor:pointer">
+                  <input type="checkbox" id="blog-featured" style="width:auto" />
+                  Mark as Featured
+                </label>
+                <label style="flex-direction:row;align-items:center;gap:0.75rem;font-weight:600;cursor:pointer">
+                  <input type="checkbox" id="blog-published" checked style="width:auto" />
+                  Published
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="blog-save-btn">Publish Post</button>
+                <button type="button" class="btn btn-ghost hidden" id="blog-cancel-btn">Cancel Edit</button>
+              </div>
+              <div class="feedback hidden" id="blog-form-feedback" role="status"></div>
+            </form>
+          </div>
+
+          <!-- LIST: existing posts -->
+          <div class="admin-shell" id="blog-list-shell">
+            <h2 style="margin-top:0;font-size:1.35rem;font-family:'Fraunces',serif">Published Posts</h2>
+            <div class="admin-list" id="admin-blog-list">
+              <div class="empty-state" id="blog-list-loading">Loading posts…</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- INVOICE MODAL -->
+  <div class="invoice-overlay hidden" id="invoice-overlay">
+    <div class="invoice-modal" id="invoice-modal">
+      <div class="invoice-modal-header">
+        <h2>📄 Invoice</h2>
+        <button type="button" class="btn btn-ghost btn-sm" id="close-invoice-btn">✕</button>
+      </div>
+      <div class="invoice-content" id="invoice-content">
+        <!-- Filled dynamically -->
+      </div>
+      <div class="invoice-modal-footer">
+        <button type="button" class="btn btn-primary" id="print-invoice-btn">🖨️ Print Invoice</button>
+        <button type="button" class="btn btn-ghost" id="close-invoice-btn-2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js?v=3"></script>
+  <script src="/js/blog-admin.js"></script>
+  <script>
+    // Tab switching
+    const tabBtns = document.querySelectorAll('[data-tab]');
+    const tabPanels = document.querySelectorAll('[data-panel]');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        tabPanels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected','true');
+        document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+        if (btn.dataset.tab === 'blog' && typeof loadBlogAdmin === 'function') loadBlogAdmin();
+      });
+    });
+
+    // Refresh button
+    document.getElementById('admin-refresh-btn')?.addEventListener('click', () => {
+      if (typeof initializeDashboard === 'function') initializeDashboard();
+      if (typeof loadBlogAdmin === 'function') loadBlogAdmin();
+    });
+
+    // Clear table filter
+    document.getElementById('clear-table-filter')?.addEventListener('click', () => {
+      const f = document.getElementById('order-table-filter');
+      if (f) { f.value = ''; f.dispatchEvent(new Event('input')); }
+    });
+  </script>
+</body>
+</html>

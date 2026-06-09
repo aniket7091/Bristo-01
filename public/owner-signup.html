@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Signup — Bristo Café Admin</title>
+  <meta name="description" content="Create your owner account to manage Bristo Café from the admin dashboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar">
+        <a class="brand" href="/">
+          <div class="brand-mark">☕</div>
+          <span>Bristo</span>
+        </a>
+        <div class="nav-actions">
+          <a href="/owner-login" class="btn btn-ghost" id="nav-back-login">← Back to Login</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth-shell" id="signup-shell">
+    <div class="auth-card" id="signup-card">
+      <div class="eyebrow" style="margin-bottom:1.25rem">☕ Owner Portal</div>
+      <h1 style="font-size:2rem;margin-bottom:0.5rem">Create Owner Account</h1>
+      <p class="muted" style="margin:0 0 1.5rem">Set up your café admin access in seconds.</p>
+
+      <form data-auth-form data-mode="signup" id="signup-form" class="form-grid" novalidate>
+        <label for="signup-name">
+          Full Name
+          <input type="text" id="signup-name" name="name" placeholder="Arjun Nair" required autocomplete="name" />
+        </label>
+        <label for="signup-email">
+          Email Address
+          <input type="email" id="signup-email" name="email" placeholder="owner@bristo.cafe" required autocomplete="email" />
+        </label>
+        <label for="signup-password">
+          Password <span class="help-text">(minimum 6 characters)</span>
+          <input type="password" id="signup-password" name="password" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" style="width:100%" id="signup-submit">Create Owner Account</button>
+        </div>
+        <div data-feedback class="feedback hidden" id="signup-feedback" role="status"></div>
+      </form>
+
+      <p class="small" style="margin-top:1.5rem;text-align:center;color:var(--muted)">
+        Already have an account? <a href="/owner-login" style="color:var(--accent-deep);font-weight:700" id="login-link">Sign in</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    if (window.BristoAPI?.getOwnerToken()) {
+      window.location.href = '/admin';
+    }
+  </script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

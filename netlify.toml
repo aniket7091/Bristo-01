@@ -1,0 +1,17 @@
+[build]
+  # We just publish the public folder directly (no build command needed for plain HTML/JS)
+  publish = "public"
+
+# Proxy API requests to your VPS backend
+[[redirects]]
+  from = "/api/*"
+  # Replace 'YOUR_VPS_IP_OR_DOMAIN' with your actual VPS IP (e.g. http://143.110.x.x) or domain
+  to = "http://YOUR_VPS_IP_OR_DOMAIN/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback routing (in case you use history API for navigation)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
